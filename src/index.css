@@ -18,6 +18,11 @@ code {
     monospace;
 }
 
+a {
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
 /* custom css */
 .app {
   color: #222f3e;
@@ -85,10 +90,11 @@ progress {
 .upload-result-container {
   max-width: 800px;
   width: 100%;
-  margin: 0 auto;
+  margin: 1rem auto;
 }
 
 .upload-result {
+  border: 2px solid #34495e;
   width: 100%;
   height: 240px;
   overflow-y: scroll;
@@ -97,11 +103,13 @@ progress {
   flex-wrap: wrap;
   justify-content: space-evenly;
   color: #222f3e;
-  border: 1px solid tomato;
+  position: relative;
 }
 .uploaded-image {
   height: 200px;
   width: 200px;
+  position: sticky;
+  top: 20px;
 }
 .uploaded-image > img {
   margin-top: 1rem;
@@ -115,4 +123,31 @@ progress {
   border-bottom: 1px solid #eee;
   padding: 0.5rem;
 }
+.imageData {
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+}
+.imageData table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+}
+.imageData table td, th {
+  border: 1px solid #aaa;
+  padding: 4px 8px;
+}
+.imageData table td:first-child {
+  width: 200px;
+  max-width: 100%;
+  font-weight: 600;
+}
+
+.close-btn {
+  display: flex;
+  justify-content: flex-end;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
 

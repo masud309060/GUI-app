@@ -1,86 +1,116 @@
 import React, { useState } from "react";
-import storage from "../firebase";
-import EXIF from "exif-js";
-import UploadResult from "./UploadResult";
+import ImageData from "./ImageData";
+import { Button, Modal } from "react-bootstrap";
+import UpdateExifForm from "./UpdateExifForm";
+import { getBase64Image } from "../utility/getBase64Image";
+import { getExifData } from "../utility/getExifData";
+import piexif from "piexifjs";
 
 const UploadImage = () => {
-    const [images, setImages] = useState([]);
-    const [urls, setUrls] = useState([]);
-    const [progress, setProgress] = useState(0);
+    const [base64Img, setBase64Img] = useState("");
+    const [imageFile, setImageFile] = useState({});
+    const [exif, setExif] = useState({});
+    const [show, setShow] = useState(false);
 
-	const handleChange = (e) => {
-        setImages(prevState => []);
-        setUrls(prevState => []);
-        let files = e.target.files;
-        for (let i = 0; i < files.length; i++) {
-            let newImage = files[i];
-            EXIF.getData(newImage, function() {
-                EXIF.getAllTags(this);
-                newImage.id = Math.round(Math.random()  * 10000);
-                setImages(prevState => [...prevState, newImage]);
-            })
-            console.log(newImage)
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+	const handleChange = async (evt) => {
+        let file = await evt.target.files[0];
+        setImageFile(file);
+        try {
+            const Base64Image = await getBase64Image(file);
+            setBase64Img(Base64Image);
+            const exifData = await getExifData(file);
+            setExif(exifData);
+        } catch(err) {
+            alert(err.message);
         }
 	};
 
-    const handleImageSubmit = () => {
-        const promises = [];
-        images.map(image => {
-            const uploadTask = storage.ref().child(`images/${image.name}`).put(image);
-            promises.push(uploadTask);
-            uploadTask.on(
-                "state_changed",
-                snapshot => {
-                    const progress = Math.round(
-                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                      );
-                      setProgress(progress);
-                },
-                errer => {
-                    console.log(errer)
-                },
-                async () => {
-                    await storage
-                    .ref("images")
-                    .child(image.name)
-                    .getDownloadURL()
-                    .then(url => {
-                        setUrls(prevState => [...prevState, url])
-                    })
-                }
-            )
-        })
-        
-        Promise.all(promises)
-        .then(() => console.log(urls))
-        .catch(() => alert('something went wrong!')) 
-    }
+    const updateExifData = (e, updatedData) => {
+        e.preventDefault();
+        handleClose();
+
+        console.log('update ongoing')
+        const zeroth = {};
+        const exif = {};
+        const gps = {};
+        if(updatedData.Make) {
+            zeroth[piexif.ImageIFD.Make] = updatedData.Make;
+        }
+        if(updatedData.Model) {
+            zeroth[piexif.ImageIFD.Model] = updatedData.Model;
+        }
+        if(updatedData.XResolution) {
+            zeroth[piexif.ImageIFD.XResolution] = [updatedData.XResolution, 1];
+        }
+        if(updatedData.YResolution) {
+            zeroth[piexif.ImageIFD.YResolution] = [updatedData.YResolution , 1];
+        }
+        if(updatedData.TileWidth) {
+            zeroth[piexif.ImageIFD.TileWidth] = [updatedData.TileWidth, 1];
+        }
+        if(updatedData.TileLength) {
+            zeroth[piexif.ImageIFD.TileLength] = [updatedData.TileLength, 1];
+        }
+        if(updatedData.Software) {
+            zeroth[piexif.ImageIFD.Software] = updatedData.Software ? updatedData.Software : "Piexif.js";
+        }
+        zeroth[piexif.ImageIFD.DateTime] = new Date().toLocaleString();
+
+        if(updatedData.ShutterSpeedValue) {
+            exif[piexif.ExifIFD.ShutterSpeedValue] = updatedData.ShutterSpeedValue;
+        }
+        if(updatedData.Flash) {
+            console.log(updatedData.Flash)
+            exif[piexif.ExifIFD.Flash] = Number(updatedData.Flash);
+        }
+        if(updatedData.FocalLength) {
+            exif[piexif.ExifIFD.FocalLength] = updatedData.FocalLength;
+        }        
+
+        gps[piexif.GPSIFD.GPSVersionID] = [7, 7, 7, 7];
+        gps[piexif.GPSIFD.GPSDateStamp] = "1999:99:99 99:99:99";
+        const exifObj = {"0th":zeroth, "Exif":exif, "GPS":gps};
+        const exifbytes = piexif.dump(exifObj);
+
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            const inserted = piexif.insert(exifbytes, e.target.result);
+            setBase64Img(inserted);
+        };
+        reader.readAsDataURL(imageFile);
+    };
 
 	return (
 		<div className="upload-image">
-            <progress value={progress} />
 			<input type="file" id="file" multiple onChange={handleChange} />
                 <div className="label-holder">
                     <label htmlFor="file" className="label take-btn">
-                        <span>Take </span>
+                        <span>Upload </span>
                         <i className="fas fa-camera"></i>
                     </label>
-                    
-                    <label onClick={handleImageSubmit} className="label upload-btn">
-                        <span>Upload</span>
-                        <i className="fas fa-cloud-upload-alt"></i>
-                    </label>
                 </div>
-                {
-                    images.length > 0 && urls.length === 0 ? 
-                    <div className="show-img-name">
-                        { images.map( (image, i) => <small key={i}>{image.name}</small> ) }
-                    </div> : ""
-                }
-                
-                <UploadResult images={images} urls={urls} /> 
+                <div style={{textAlign: "center", marginTop: "1rem"}}>
+                    <img src={base64Img} height="400" alt="" />
+                </div>
+                { base64Img &&
+                <div className="d-flex justify-content-center gap-3 mt-3">
+                    <Button variant="danger" onClick={handleShow}>Update MetaData</Button>
+                    <Button variant="success">
+                        <a href={base64Img} download={"download" + Math.round(Math.random() * 10000)} >DownLoad Image</a>
+                    </Button>
+                </div>}
+                <Modal show={show}>
+                    <UpdateExifForm handleClose={handleClose} updateExifData={updateExifData} exif={exif} />
+                </Modal>
+                <ul>
+                    <ImageData imageFile={imageFile} exif={exif} /> 
+                </ul>
 		</div>
 	);
 };
 
 export default UploadImage;
+
