@@ -2,7 +2,6 @@ import piexif from "piexifjs";
 import React from "react";
 
 const ImageData = ({ imageFile, exif }) => {
-
 	// const ifds = ["0th", "Exif", "GPS", "Interop", "1st"];
 	return (
 		<div className="imageData">
@@ -126,6 +125,16 @@ const ImageData = ({ imageFile, exif }) => {
 			) : (
 				""
 			)}
+			{exif["Exif"] ? (
+				<table>
+				{exif["GPS"][piexif.ExifIFD.ShutterSpeedValue] && (
+					<tr>
+						<td>ShutterSpeedValue:</td>
+						<td>{exif["GPS"][piexif.ExifIFD.ShutterSpeedValue]}</td>
+					</tr>
+				)}
+				</table>
+			): "" }
 		</div>
 	);
 };

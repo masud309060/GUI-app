@@ -8,13 +8,14 @@ const UpdateExifForm = ({ updateExifData, handleClose, exif }) => {
         Model: exif["0th"][piexif.ImageIFD.Model],
         TileWidth: exif["0th"][piexif.ImageIFD.TileWidth],
         TileLength: exif["0th"][piexif.ImageIFD.TileLength],
+        XResolution: exif["0th"][piexif.ImageIFD.XResolution],
+        YResolution: exif["0th"][piexif.ImageIFD.YResolution],
         ShutterSpeedValue: exif["Exif"][piexif.ExifIFD.ShutterSpeedValue],
         Flash: exif["Exif"][piexif.ExifIFD.Flash],
         FocalLength: exif["Exif"][piexif.ExifIFD.FocalLength],
     });
     const handleExifChange = (e) => {
         setUpdatedExif({...updatedExif, [e.target.name]: e.target.value})
-        console.log(updatedExif);
     }
 
 	return (
