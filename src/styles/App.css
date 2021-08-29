@@ -1,0 +1,9 @@
+.app {
+	color: #222f3e;
+    background-color: #f7f1e3;
+	min-height: 100vh;
+}
+.app h2 {
+	padding: 1rem 0;
+	text-align: center;
+}

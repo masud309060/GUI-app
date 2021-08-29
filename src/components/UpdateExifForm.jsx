@@ -10,9 +10,20 @@ const UpdateExifForm = ({ updateExifData, handleClose, exif }) => {
         TileLength: exif["0th"][piexif.ImageIFD.TileLength],
         XResolution: exif["0th"][piexif.ImageIFD.XResolution],
         YResolution: exif["0th"][piexif.ImageIFD.YResolution],
+        Software: exif["0th"][piexif.ImageIFD.Software],
+
         ShutterSpeedValue: exif["Exif"][piexif.ExifIFD.ShutterSpeedValue],
         Flash: exif["Exif"][piexif.ExifIFD.Flash],
         FocalLength: exif["Exif"][piexif.ExifIFD.FocalLength],
+        ApertureValue: exif["Exif"][piexif.ExifIFD.ApertureValue],
+        BrightnessValue: exif["Exif"][piexif.ExifIFD.BrightnessValue],
+        LensModel: exif["Exif"][piexif.ExifIFD.LensModel],
+
+		GPSLatitude: exif["GPS"][piexif.GPSIFD.GPSLatitude],
+		GPSLatitudeRef: exif["GPS"][piexif.GPSIFD.GPSLatitudeRef],
+		GPSLongitude: exif["GPS"][piexif.GPSIFD.GPSLongitude],
+		GPSLongitudeRef: exif["GPS"][piexif.GPSIFD.GPSLongitudeRef],
+
     });
     const handleExifChange = (e) => {
         setUpdatedExif({...updatedExif, [e.target.name]: e.target.value})
@@ -72,7 +83,7 @@ const UpdateExifForm = ({ updateExifData, handleClose, exif }) => {
                 
 				<Form.Group className="mb-2">
 					<Form.Label>FocalLength</Form.Label>
-					<Form.Control size="sm" type="number" defaultValue={updatedExif.FocalLength} name="FocalLength" />
+					<Form.Control size="sm" type="text" defaultValue={updatedExif.FocalLength} name="FocalLength" />
 				</Form.Group>
 
 				<div className="d-flex gap-3">

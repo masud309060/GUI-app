@@ -1,6 +1,6 @@
 import piexif from "piexifjs";
 
-export const getExifData = (file) => {
+const getExifData = (file) => {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();
 
@@ -24,3 +24,5 @@ export const getExifData = (file) => {
 		reader.readAsDataURL(file);
 	})
 };
+
+export default getExifData;

@@ -5,31 +5,38 @@ const ImageData = ({ imageFile, exif }) => {
 	// const ifds = ["0th", "Exif", "GPS", "Interop", "1st"];
 	return (
 		<div className="imageData">
-			{ imageFile.name && imageFile.size?
-			<table>
-				<tr>
-					<th colSpan="2">Basic Image info:</th>
-				</tr>
-				<tr>
-					<td>File Name</td>
-					<td>{imageFile.name}</td>
-				</tr>
-				<tr>
-					<td>File size</td>
-					<td>{(Number(imageFile.size) / 1000000).toFixed(2)} MB</td>
-				</tr>
-				<tr>
-					<td>File Type</td>
-					<td>{imageFile.type}</td>
-				</tr>
-			</table> : ""}
+			{/* ----Basic info of uploaded file */}
+			{imageFile && imageFile.name && imageFile.size ? (
+				<table>
+					<tr>
+						<th colSpan="2">Basic Image info:</th>
+					</tr>
+					<tr>
+						<td>File Name</td>
+						<td>{imageFile.name}</td>
+					</tr>
+					<tr>
+						<td>File size</td>
+						<td>
+							{(Number(imageFile.size) / 1000000).toFixed(2)} MB
+						</td>
+					</tr>
+					<tr>
+						<td>File Type</td>
+						<td>{imageFile.type}</td>
+					</tr>
+				</table>
+			) : (
+				""
+			)}
 
+			{/*----- Exif Data of What device took the photo and what OS version Dit it use ---------*/}
 			{exif["0th"] ? (
 				<table>
 					<tr>
-						<th>Exif: </th>
+						<th colSpan="2">Exif Meta Data of Image: </th>
 					</tr>
-					{exif["0th"]  && exif["0th"][piexif.ImageIFD.Make] && (
+					{exif["0th"] && exif["0th"][piexif.ImageIFD.Make] && (
 						<tr>
 							<td>Make:</td>
 							<td>{exif["0th"][piexif.ImageIFD.Make]}</td>
@@ -45,13 +52,19 @@ const ImageData = ({ imageFile, exif }) => {
 					{exif["0th"][piexif.ImageIFD.XResolution] && (
 						<tr>
 							<td>XResolution:</td>
-							<td>{exif["0th"][piexif.ImageIFD.XResolution][0]} Pixels</td>
+							<td>
+								{exif["0th"][piexif.ImageIFD.XResolution][0]}{" "}
+								Pixels
+							</td>
 						</tr>
 					)}
 					{exif["0th"][piexif.ImageIFD.YResolution] && (
 						<tr>
 							<td>YResolution:</td>
-							<td>{exif["0th"][piexif.ImageIFD.YResolution][0]} Pixels</td>
+							<td>
+								{exif["0th"][piexif.ImageIFD.YResolution][0]}{" "}
+								Pixels
+							</td>
 						</tr>
 					)}
 					{exif["0th"][piexif.ImageIFD.DateTime] && (
@@ -83,24 +96,31 @@ const ImageData = ({ imageFile, exif }) => {
 				""
 			)}
 
+			{/*-------------- Exif Data of when was the photo taken --------------------*/}
 			{exif["Exif"] ? (
 				<table>
 					{exif["Exif"][piexif.ExifIFD.ShutterSpeedValue] && (
 						<tr>
 							<td>ShutterSpeedValue:</td>
-							<td>{exif["Exif"][piexif.ExifIFD.ShutterSpeedValue]}</td>
+							<td>
+								{exif["Exif"][piexif.ExifIFD.ShutterSpeedValue]}
+							</td>
 						</tr>
 					)}
 					{exif["Exif"][piexif.ExifIFD.ApertureValue] && (
 						<tr>
 							<td>ApertureValue:</td>
-							<td>{exif["Exif"][piexif.ExifIFD.ApertureValue]}</td>
+							<td>
+								{exif["Exif"][piexif.ExifIFD.ApertureValue]}
+							</td>
 						</tr>
 					)}
 					{exif["Exif"][piexif.ExifIFD.BrightnessValue] && (
 						<tr>
 							<td>BrightnessValue:</td>
-							<td>{exif["Exif"][piexif.ExifIFD.BrightnessValue]}</td>
+							<td>
+								{exif["Exif"][piexif.ExifIFD.BrightnessValue]}
+							</td>
 						</tr>
 					)}
 					{exif["Exif"][piexif.ExifIFD.Flash] && (
@@ -125,16 +145,40 @@ const ImageData = ({ imageFile, exif }) => {
 			) : (
 				""
 			)}
-			{exif["Exif"] ? (
+
+			{/*-------------- Exif Data of GPS --------------------*/}
+			{exif["GPS"] ? (
 				<table>
-				{exif["GPS"][piexif.ExifIFD.ShutterSpeedValue] && (
-					<tr>
-						<td>ShutterSpeedValue:</td>
-						<td>{exif["GPS"][piexif.ExifIFD.ShutterSpeedValue]}</td>
-					</tr>
-				)}
+					{exif["GPS"][piexif.GPSIFD.GPSLatitude] && (
+						<tr>
+							<td>GPSLatitude: </td>
+							<td>{exif["GPS"][piexif.GPSIFD.GPSLatitude]}</td>
+						</tr>
+					)}
+					{exif["GPS"][piexif.GPSIFD.GPSLatitudeRef] && (
+						<tr>
+							<td>GPSLatitudeRef: </td>
+							<td>{exif["GPS"][piexif.GPSIFD.GPSLatitudeRef]}</td>
+						</tr>
+					)}
+					{exif["GPS"][piexif.GPSIFD.GPSLongitude] && (
+						<tr>
+							<td>GPSLongitude: </td>
+							<td>{exif["GPS"][piexif.GPSIFD.GPSLongitude]}</td>
+						</tr>
+					)}
+					{exif["GPS"][piexif.GPSIFD.GPSLongitudeRef] && (
+						<tr>
+							<td>GPSLongitudeRef: </td>
+							<td>
+								{exif["GPS"][piexif.GPSIFD.GPSLongitudeRef]}
+							</td>
+						</tr>
+					)}
 				</table>
-			): "" }
+			) : (
+				""
+			)}
 		</div>
 	);
 };

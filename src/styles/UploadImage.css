@@ -1,0 +1,40 @@
+.uploaded-image {
+	margin-top: 1rem;
+	width: 100%;
+	max-height: 400px;
+	height: 100%;
+	object-fit: contain;
+}
+
+#file[type="file"] {
+	display: none;
+}
+.label-holder {
+	display: flex;
+	max-width: 400px;
+	margin: 0 auto;
+	justify-content: space-between;
+}
+.label {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 120px;
+	height: 30px;
+	margin: 0 auto;
+	font-size: 1.1rem;
+	color: #eee;
+	cursor: pointer;
+	transition: 0.5s;
+}
+.label:hover {
+	transform: scale(1.1);
+	color: #fff;
+}
+.upload-btn {
+	background-color: #5f27cd;
+}
+
+.label span {
+	margin-right: 5px;
+}

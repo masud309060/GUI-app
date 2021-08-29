@@ -1,0 +1,6 @@
+.close-btn {
+	display: flex;
+	justify-content: flex-end;
+	cursor: pointer;
+	font-size: 1.2rem;
+}

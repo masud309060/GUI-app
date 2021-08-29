@@ -1,0 +1,23 @@
+.imageData {
+	max-width: 800px;
+	width: 100%;
+	margin: 0 auto;
+}
+.imageData table {
+	border-collapse: collapse;
+	width: 100%;
+	margin: 1rem 0;
+}
+.imageData table td {
+	border: 1px solid #aaa;
+	padding: 4px 8px;
+}
+.imageData table th {
+	padding: 4px 8px;
+}
+
+.imageData table td:first-child {
+	width: 200px;
+	max-width: 100%;
+	font-weight: 600;
+}
